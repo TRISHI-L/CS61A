@@ -57,9 +57,11 @@ def double_eights(n):
     False
     """
     "*** YOUR CODE HERE ***"
-    flag=False
+    prev_digit = None
     while(n!=0):
-        if(n%10==8):
-            count
+        last_digit=n%10
+        if last_digit==8 and prev_digit==8 :
+            return True
+        prev_digit=last_digit
         n//=10
-
+    return False
