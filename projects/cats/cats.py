@@ -101,6 +101,14 @@ def autocorrect(user_word, valid_words, diff_function, limit):
     """
     # BEGIN PROBLEM 5
     "*** YOUR CODE HERE ***"
+    if user_word in valid_words:
+        return user_word
+    possible_word=min(valid_words,key=lambda x: diff_function(x,user_word,limit))
+    if diff_function(possible_word,user_word,limit) > limit:
+        return user_word
+    else:
+        return possible_word
+
     # END PROBLEM 5
 
 
@@ -110,38 +118,68 @@ def shifty_shifts(start, goal, limit):
     their lengths.
     """
     # BEGIN PROBLEM 6
-    assert False, 'Remove this line'
+    if start==goal:
+        return 0
+    if limit<0:
+        return 1124132
+    elif len(start)==0:
+        return len(goal) 
+    elif len(goal)==0:
+        return len(start)
+    elif start[0]!=goal[0]:
+        return 1+shifty_shifts(start[1:],goal[1:],limit-1)
+    else:
+        return shifty_shifts(start[1:],goal[1:],limit)
     # END PROBLEM 6
 
 
+
 def pawssible_patches(start, goal, limit):
-    """A diff function that computes the edit distance from START to GOAL."""
-    assert False, 'Remove this line'
+    "A diff function that computes the edit distance from START to GOAL."
+    
+    """Base case 1: If either start or goal is empty, and the remaining operations
+    # exceed the limit, return a large value (indicating no valid transformation)"""
+    if not start or not goal:
+        if len(start)+len(goal)<=limit:
+            """print("Base case: one of start or goal is empty,and len <= limit")"""
+            return len(start)+len(goal)
+        else:
+            """print("Base case: one of start or goal is empty,and len > limit")"""
+            return float('inf')
 
-    if ______________: # Fill in the condition
+    "Base case 2: If the first characters match, no edit is needed"
+    if start[0]==goal[0]: # Fill in the condition
         # BEGIN
         "*** YOUR CODE HERE ***"
+        """print("Characters match, recursion with next characters")"""
+        return pawssible_patches(start[1:],goal[1:],limit)
         # END
 
-    elif ___________: # Feel free to remove or add additional cases
+    "3: If both start and goal are empty, the edit distance is 0"
+    if not start and not goal: # Feel free to remove or add additional cases
         # BEGIN
         "*** YOUR CODE HERE ***"
+        """print("Base case: both start and goal are empty")"""
+        return 0
         # END
+    if limit < 0:
+        return 12232412
+
 
     else:
-        add_diff = ... # Fill in these lines
-        remove_diff = ...
-        substitute_diff = ...
+        """print("Characters don't match, consider add, remove, substitute")"""
+        add_diff =1+pawssible_patches(start[:],goal[1:],limit-1) # Fill in these lines
+        remove_diff = 1+pawssible_patches(start[1:],goal[:],limit-1)
+        substitute_diff =1+ pawssible_patches(start[1:],goal[1:],limit-1)
         # BEGIN
         "*** YOUR CODE HERE ***"
+        return min(add_diff,remove_diff,substitute_diff)
+
         # END
 
 
-def final_diff(start, goal, limit):
-    """A diff function. If you implement this function, it will be used."""
-    assert False, 'Remove this line to use your final_diff function'
-
-
+"""def final_diff(start, goal, limit):
+    A diff function. If you implement this function, it will be used."""
 ###########
 # Phase 3 #
 ###########
@@ -151,6 +189,18 @@ def report_progress(typed, prompt, user_id, send):
     """Send a report of your id and progress so far to the multiplayer server."""
     # BEGIN PROBLEM 8
     "*** YOUR CODE HERE ***"
+    count=0
+    for i in range(len(typed)):
+        if typed[i]==prompt[i]:
+            count+=1
+        else:
+            break
+    ratio=count/len(prompt)
+    message={}
+    message['id']=user_id
+    message['progress']=ratio
+    send(message)
+    return ratio
     # END PROBLEM 8
 
 
@@ -177,6 +227,8 @@ def time_per_word(times_per_player, words):
     """
     # BEGIN PROBLEM 9
     "*** YOUR CODE HERE ***"
+    times=[[times_per_player[i][k+1]-times_per_player[i][k] for k in range(len(words))] for i in range(len(times_per_player))]    
+    return game(words,times)
     # END PROBLEM 9
 
 
@@ -192,6 +244,16 @@ def fastest_words(game):
     word_indices = range(len(all_words(game)))    # contains an *index* for each word
     # BEGIN PROBLEM 10
     "*** YOUR CODE HERE ***"
+    result=[]
+    for _ in player_indices:
+        "use _ as placeholders for loop variables"
+        fastest=[]
+        result.append(fastest)
+    for w in word_indices:
+        "word_indices is a range of number from 1 to len((all_words(game)))"
+        fastest_player=min(player_indices,key=lambda player:time(game,player,w))
+        result[fastest_player].append(word_at(game,w))
+    return result
     # END PROBLEM 10
 
 
@@ -231,10 +293,6 @@ def game_string(game):
     """A helper function that takes in a game object and returns a string representation of it"""
     return "game(%s, %s)" % (game[0], game[1])
 
-enable_multiplayer = False  # Change to True when you're ready to race.
-
-##########################
-# Command Line Interface #
 ##########################
 
 
